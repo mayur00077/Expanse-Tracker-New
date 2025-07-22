@@ -7,26 +7,31 @@ from telegram.ext import ApplicationBuilder, MessageHandler, filters, ContextTyp
 import gspread
 from google.oauth2.service_account import Credentials
 
-# Logging setup
+# Setup logging
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 
-# Load BOT_TOKEN
+# Load Telegram Bot Token from environment
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 if not BOT_TOKEN:
     raise ValueError("❌ BOT_TOKEN environment variable not set.")
 
-# Google Sheet setup
+# Google Sheet configuration
 SHEET_NAME = "Telegram_Expense_Tracker"
-SCOPES = ["https://www.googleapis.com/auth/spreadsheets"]
+SCOPES = [
+    "https://www.googleapis.com/auth/spreadsheets",
+    "https://www.googleapis.com/auth/drive"
+]
+
+# Authenticate and connect to Google Sheet
 creds = Credentials.from_service_account_file("google_creds.json", scopes=SCOPES)
 client = gspread.authorize(creds)
 sheet = client.open(SHEET_NAME).sheet1
 
-# Header row setup
+# Initialize sheet with headers if empty or incorrect
 if not sheet.get_all_values() or sheet.row_values(1) != ["Date", "Time", "Amount", "Description"]:
     sheet.update("A1:D1", [["Date", "Time", "Amount", "Description"]])
 
-# Message parsing function
+# SMS message parser
 def extract_details(text):
     try:
         text = text.replace("\n", " ")
@@ -44,7 +49,7 @@ def extract_details(text):
         logging.error("Parsing error: %s", e)
     return None
 
-# Telegram handler
+# Telegram message handler
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     text = update.message.text
     result = extract_details(text)
@@ -54,7 +59,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     else:
         await update.message.reply_text("❌ Couldn't extract expense details.")
 
-# Main loop
+# Main entry point
 if __name__ == "__main__":
     app = ApplicationBuilder().token(BOT_TOKEN).build()
     app.add_handler(MessageHandler(filters.TEXT & (~filters.COMMAND), handle_message))
