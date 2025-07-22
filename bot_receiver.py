@@ -34,10 +34,16 @@ if not sheet.get_all_values() or sheet.row_values(1) != ["Date", "Time", "Amount
 # SMS message parser
 def extract_details(text):
     try:
-        text = text.replace("\n", " ")
+        text = text.replace("\n", " ").strip()
+
+        # Extract date
         date_match = re.search(r'on (\d{1,2}-[A-Za-z]{3}-\d{2})', text, re.IGNORECASE)
-        amount_match = re.search(r'for Rs\.?\s*(\d+[.]?\d*)', text, re.IGNORECASE)
-        desc_match = re.search(r'credited\.?(.*?)UPI', text, re.IGNORECASE)
+
+        # Extract amount
+        amount_match = re.search(r'Rs\.?\s*(\d+[.]?\d*)', text, re.IGNORECASE)
+
+        # Extract description (between `;` and `credited`)
+        desc_match = re.search(r';\s*(.*?)\s*credited', text, re.IGNORECASE)
 
         if date_match and amount_match:
             dt = datetime.strptime(date_match.group(1), "%d-%b-%y")
@@ -45,8 +51,10 @@ def extract_details(text):
             amount = float(amount_match.group(1))
             description = desc_match.group(1).strip() if desc_match else "Unknown"
             return dt.strftime("%d-%b-%y"), time_str, amount, description
+
     except Exception as e:
         logging.error("Parsing error: %s", e)
+
     return None
 
 # Telegram message handler
