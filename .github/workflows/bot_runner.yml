@@ -3,7 +3,7 @@ name: Telegram Expense Bot
 on:
   schedule:
     - cron: "*/10 * * * *"  # runs every 10 minutes
-  workflow_dispatch:       # allows manual trigger
+  workflow_dispatch:
 
 jobs:
   run-bot:
@@ -23,10 +23,12 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
+      - name: Decode Google credentials
+        run: echo "$GOOGLE_CREDENTIALS_JSON" | base64 --decode > google_creds.json
+        env:
+          GOOGLE_CREDENTIALS_JSON: ${{ secrets.GOOGLE_CREDENTIALS_JSON }}
+
       - name: Run bot script
         env:
           BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
-          GOOGLE_CREDENTIALS_JSON: ${{ secrets.GOOGLE_CREDENTIALS_JSON }}
-        run: |
-          echo "$GOOGLE_CREDENTIALS_JSON" > google_creds.json
-          python bot_receiver.py
+        run: python bot_receiver.py
