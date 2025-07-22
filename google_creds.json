@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "telegram-bot-expanse-tracker",
+  "private_key_id": "8a8948ca14d6b09f0f6ffee3f08321aa511c77c0",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCmI251x8YAgcwm\nq3bA2tI0vaLZ0LBNXMR8C6Q68E8YgBcTtLy4ucC4pKe0mmOK5M3WTvuC2qUxS3JT\nPxiarA22eDrYKEpaJJ0BLMkrI8eInEGo3MYOHJdTGTLGjHgO7Q13g6WQP3RSfr0b\npQ0BkKu5swHMPDxB+XATAbi1Y5esGn1HfPll2JEOdvkOpB47JXs2iH61/3ylAcjB\ngIcRTV3/Jn4i9umHqnCZm6TA6Pa8N9wvDDjwpSZuCikjGYlr1dfQaPEQoDq/9MmB\nQZx+HOw7BjMyicPqWXzp9BrETfX34Ixe0wxc2WbCN4Y+mdwORi9HnFuqnUDfi3Oh\nZ7zoXZuzAgMBAAECggEAFPHGjSagOZQjboSTNgDgGzIFA7yhXT9irdix3ZRKBGax\nghR47jjMqPppAgWsoufxYyEV6As0ZCCEyyXbLjSejfBeSr3Zkb+n42wH+F5MW1aH\nmIgsl77W/OziT9GJmSgdWIHKL4MwYO4FXSTTnOzmGUUN5vd5CUAu9tZyuLtTdai1\nLn/GbInGMt+6Q/ocl0TqsXpz4BpbiT6Q6eVB33dh1M7tWPc+G4ELBjQdy5944/y/\nDQ5hvhho0nQYjPIO4iH4jZ8ZVx60PkL/7azFje9XKi/pNOsYuj8ucQbyIneSqlG7\nSbXizZ+4nfOUReOCk6lz/AERkbqkQYGKUT3bOEcWgQKBgQDYuKrv8cQPZ96foONB\ny/zpzh6uW2t/isDreVRJPUDMJmQHjyNR/yqF0lZHNke2In+E79bEOhbkFF5XtAMB\naFo5Op1/gsv6obmtYSmTWlTIjPq8VKntbPHF01Auxd/g5EVykfZVNwDq5SVDeYXz\njZBBc9Xl+KbDhpTB0VRZyV1G4QKBgQDEP9cm4TQ2ZgYwCqahRYeR5DHf5CUyWPbd\n4yfZSjAZvfcCYtoA6/0UwXjsw2rjaePftkWLIbKrXQ0Uo756AJsUR5lHl93wBbbM\nCeMDSutd0qLQot58R/1KYsJQN+K81X/Isrx5kHsGYLDGOcZeZXFWsrZcUxRcIHPx\nPw84ixF5EwKBgBZOA0HIty4CubXiICGQdgo2LZAyVoD87dgOV69l/3pDZT4l7DOv\nOFgniruviXfkWw16hbcSZ3K36fHK1Bhb/hUvxC/wbT/xTyPaASZqQJmXcOLbL9YA\nxW1fzzvRH7aMp90fyqOAkraaONiV9ERZyIQEAPq3Oaqb+klsWusWv2PhAoGBAMNm\n5Wz68yfu8d5H3J3bQx9KXTaWTUsSNcu87+J08evPr/CaSIJ+dqGB+kuUUAtbVd9b\n92aPCP2DSxDv8So9DCxnFgGo/vyMU/RZK8YNhMkIf8DJSknozBSSvPNukb5/vhox\njWRlLXmuMJVO1WsMCovOqbDHsBAC6C6fISKlpaItAoGAee00NEjF3gxDl4QvBoAM\nbo//wMSFPOnTiRyuACct3AjFCmvhbzSj03IFCF+N2WabdCTt44dDDIhgH+i6R+j0\nQOEHcR0vLnGgcECXyhEHp1vmgtNcyEMcVFmwSH+V3d0RZSf684lcw9C8kZOV2jTp\nRpc4sRnGrsFBWBLYiAIPLzE=\n-----END PRIVATE KEY-----\n",
+  "client_email": "expanse-tracker@telegram-bot-expanse-tracker.iam.gserviceaccount.com",
+  "client_id": "101509659817629427370",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/expanse-tracker%40telegram-bot-expanse-tracker.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
