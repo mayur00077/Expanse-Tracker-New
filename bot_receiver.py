@@ -36,20 +36,20 @@ def extract_details(text):
     try:
         text = text.replace("\n", " ").strip()
 
-        # Extract date
+        # Extract date like "19-Jul-25"
         date_match = re.search(r'on (\d{1,2}-[A-Za-z]{3}-\d{2})', text, re.IGNORECASE)
 
-        # Extract amount
+        # Extract amount like "Rs 100.00"
         amount_match = re.search(r'Rs\.?\s*(\d+[.]?\d*)', text, re.IGNORECASE)
 
-        # Extract description (between `;` and `credited`)
-        desc_match = re.search(r';\s*(.*?)\s*credited', text, re.IGNORECASE)
+        # Extract description like 'Facebook Hair S' from "; Facebook Hair S credited"
+        desc_match = re.search(r';\s*(.*?)\s+credited', text, re.IGNORECASE)
 
         if date_match and amount_match:
             dt = datetime.strptime(date_match.group(1), "%d-%b-%y")
             time_str = datetime.now().strftime("%H:%M")
             amount = float(amount_match.group(1))
-            description = desc_match.group(1).strip() if desc_match else "Unknown"
+            description = desc_match.group(1).strip() if desc_match and desc_match.group(1) else "Unknown"
             return dt.strftime("%d-%b-%y"), time_str, amount, description
 
     except Exception as e:
