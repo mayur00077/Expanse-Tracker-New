@@ -1,4 +1,3 @@
-
 import os
 import logging
 import re
@@ -8,26 +7,32 @@ from telegram.ext import ApplicationBuilder, MessageHandler, filters, ContextTyp
 import gspread
 from google.oauth2.service_account import Credentials
 
-# Logging
+# Logging setup
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 
+# Load BOT_TOKEN
 BOT_TOKEN = os.getenv("BOT_TOKEN")
-SHEET_NAME = "Telegram_Expense_Tracker"
+if not BOT_TOKEN:
+    raise ValueError("❌ BOT_TOKEN environment variable not set.")
 
+# Google Sheet setup
+SHEET_NAME = "Telegram_Expense_Tracker"
 SCOPES = ["https://www.googleapis.com/auth/spreadsheets"]
 creds = Credentials.from_service_account_file("google_creds.json", scopes=SCOPES)
 client = gspread.authorize(creds)
 sheet = client.open(SHEET_NAME).sheet1
 
-# Set header if empty
-if sheet.row_count == 0 or sheet.row_values(1) != ["Date", "Time", "Amount", "Description"]:
+# Header row setup
+if not sheet.get_all_values() or sheet.row_values(1) != ["Date", "Time", "Amount", "Description"]:
     sheet.update("A1:D1", [["Date", "Time", "Amount", "Description"]])
 
+# Message parsing function
 def extract_details(text):
     try:
-        date_match = re.search(r'on (\d{1,2}-[A-Za-z]{3}-\d{2})', text)
-        amount_match = re.search(r'for Rs (\d+[.]?\d*)', text)
-        desc_match = re.search(r'credited\.?(.*?)UPI', text)
+        text = text.replace("\n", " ")
+        date_match = re.search(r'on (\d{1,2}-[A-Za-z]{3}-\d{2})', text, re.IGNORECASE)
+        amount_match = re.search(r'for Rs\.?\s*(\d+[.]?\d*)', text, re.IGNORECASE)
+        desc_match = re.search(r'credited\.?(.*?)UPI', text, re.IGNORECASE)
 
         if date_match and amount_match:
             dt = datetime.strptime(date_match.group(1), "%d-%b-%y")
@@ -36,20 +41,22 @@ def extract_details(text):
             description = desc_match.group(1).strip() if desc_match else "Unknown"
             return dt.strftime("%d-%b-%y"), time_str, amount, description
     except Exception as e:
-        print("Parsing error:", e)
+        logging.error("Parsing error: %s", e)
     return None
 
+# Telegram handler
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     text = update.message.text
     result = extract_details(text)
     if result:
         sheet.append_row(list(result))
-        await update.message.reply_text("✅ Expense recorded to Google Sheet.")
+        await update.message.reply_text("✅ Expense recorded in Google Sheet.")
     else:
-        await update.message.reply_text("❌ Couldn't extract details.")
+        await update.message.reply_text("❌ Couldn't extract expense details.")
 
+# Main loop
 if __name__ == "__main__":
     app = ApplicationBuilder().token(BOT_TOKEN).build()
     app.add_handler(MessageHandler(filters.TEXT & (~filters.COMMAND), handle_message))
-    print("Bot is running...")
+    print("📲 Bot is running...")
     app.run_polling()
