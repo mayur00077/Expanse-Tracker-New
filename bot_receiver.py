@@ -2,35 +2,36 @@ import os
 import logging
 import re
 from datetime import datetime
-from telegram import Bot
-from telegram.constants import ParseMode
-from telegram.ext import Defaults
+from telegram import Update
+from telegram.ext import ApplicationBuilder, MessageHandler, filters, ContextTypes
 import gspread
 from google.oauth2.service_account import Credentials
 
 # Setup logging
-logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s', level=logging.INFO)
+logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 
-# Load env
+# Load Telegram Bot Token from environment
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 if not BOT_TOKEN:
     raise ValueError("❌ BOT_TOKEN environment variable not set.")
 
-# Google Sheets config
+# Google Sheet configuration
 SHEET_NAME = "Telegram_Expense_Tracker"
 SCOPES = [
     "https://www.googleapis.com/auth/spreadsheets",
     "https://www.googleapis.com/auth/drive"
 ]
+
+# Authenticate and connect to Google Sheet
 creds = Credentials.from_service_account_file("google_creds.json", scopes=SCOPES)
 client = gspread.authorize(creds)
 sheet = client.open(SHEET_NAME).sheet1
 
-# Add header if missing
+# Initialize sheet with headers if empty or incorrect
 if not sheet.get_all_values() or sheet.row_values(1) != ["Date", "Time", "Amount", "Description"]:
     sheet.update("A1:D1", [["Date", "Time", "Amount", "Description"]])
 
-# Message parser
+# Extract expense details from SMS text
 def extract_details(text):
     try:
         text = text.replace("\n", " ").strip()
@@ -48,19 +49,19 @@ def extract_details(text):
         logging.error("Parsing error: %s", e)
     return None
 
-# Pull latest messages from Telegram
-def process_updates():
-    bot = Bot(token=BOT_TOKEN, defaults=Defaults(parse_mode=ParseMode.HTML))
-    updates = bot.get_updates()
-    for update in updates:
-        msg = update.message.text
-        chat_id = update.message.chat_id
-        result = extract_details(msg)
-        if result:
-            sheet.append_row(list(result))
-            bot.send_message(chat_id, "✅ Expense recorded in Google Sheet.")
-        else:
-            bot.send_message(chat_id, "❌ Couldn't extract expense details.")
+# Telegram message handler
+async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    text = update.message.text
+    result = extract_details(text)
+    if result:
+        sheet.append_row(list(result))
+        await update.message.reply_text("✅ Expense recorded in Google Sheet.")
+    else:
+        await update.message.reply_text("❌ Couldn't extract expense details.")
 
+# Main execution
 if __name__ == "__main__":
-    process_updates()
+    app = ApplicationBuilder().token(BOT_TOKEN).build()
+    app.add_handler(MessageHandler(filters.TEXT & (~filters.COMMAND), handle_message))
+    print("📲 Bot is running...")
+    app.run_polling()
